@@ -26,5 +26,3 @@ if __name__=='__main__':
     print("< Example >")
     print("python3 generate_net.py %d 1 1 > example.net" % N)
     print("python3 insert_command.py")
-    
-    # sato
