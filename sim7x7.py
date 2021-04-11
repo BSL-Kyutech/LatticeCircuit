@@ -1,4 +1,6 @@
 import numpy as np
+import subprocess
+import re
 
 
 #####################################
@@ -23,7 +25,7 @@ for i in range(N):
 for i in range(N):
     for j in range(N+1):
         pos_R.append([(1.0/N)*j, (1.0/N/2.0)+(1.0/N)*i])
-    for j in range(10):
+    for j in range(N):
         pos_R.append([(1.0/N/2.0)+(1.0/N)*j, (1.0/N)+(1.0/N)*i])
 pos_R = np.array(pos_R)
 
