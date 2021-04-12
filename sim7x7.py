@@ -9,12 +9,24 @@ import re
 
 # PATH to LTspice application and configuration files
 # **NOTE** You MUST change them for your environment!!
-file_exe = '/mnt/c/Program\ Files/LTC/LTspiceXVII/XVIIx64.exe'
+file_exe = '/mnt/c/Program Files/LTC/LTspiceXVII/XVIIx64.exe'
 path_current =  '/mnt/c/Users/shuhe/Repositories/LatticeCircuit'
 filename_net_base = 'base.net'
 
 # Size of circuit
-M = 10 # M edges between two input/output nodes (terminals)
+#with open(path_current+str('/')+filename_net_base) as f:
+#        data_lines = f.read()
+#    for i in range(R.size):
+#        data_lines = re.sub('R%d\s([a-zA-Z0-9_]+)\s([a-zA-Z0-9_]+)\s.+(.)\s' % i, 'R%d \\1 \\2 %f\\3\n' % (i,R[i]), data_lines)
+#    for i in range(C.size):
+#        data_lines = re.sub('C%d\s([a-zA-Z0-9_]+)\s([a-zA-Z0-9_]+)\s.+(.)\s' % i, 'C%d \\1 \\2 %f\\3\n' % (i,C[i]), data_lines)
+#    return data_lines
+
+M = 3 # M edges between two input/output nodes (terminals)
+
+# the parameter M should be taken from the netlist file
+# NEED TO BE UPDATED!!!
+
 N = (7+1)*M # Total length of a side
 
 
@@ -103,13 +115,18 @@ def run_simulation(p_touch, f_touch):
     for p in p_touch:
         for f in f_touch:
             print("x:%1.1f, y:%1.1f, f:%1.1f" % (p[0], p[1], f))
+            print("Making netlist...")
             dR, dC = compute_changes_in_components(p,f)
             netlist = generate_netlist(R+dR, C+dC)
             save_netlist(netlist)
+            print("done.")
             while True:
+                print("Running LTspice...")
                 x=run_ltspice()
+                print("done.")
                 if x is None:
-                    print("going to re-try")
+                    print("No output obtained.")
+                    print("Going to re-try")
                 else:
                     break
             y=np.insert(p, 2, f)

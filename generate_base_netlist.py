@@ -1,5 +1,6 @@
 import argparse
 import numpy as np
+import re
 
 
 if __name__=='__main__':
@@ -29,18 +30,16 @@ if __name__=='__main__':
     map_node = np.arange((N+1)*(N+1))
     map_node = map_node + 1
     # translate to node labels and place output terminals
-    map_node = ["N%04d" % node for node in map_node]
+    map_node = ["N%03d" % node for node in map_node]
     for i in range(len(node_out)):
-        map_node = ["%d"%(i+1) if node==("N%04d" % node_out[i]) else node for node in map_node]
+        map_node = ["%d"%(i+1) if node==("N%03d" % node_out[i]) else node for node in map_node]
+        map_node = ["N%03d" % (int(re.sub(r'\D', '', node))-1) if int(re.sub(r'\D', '', node)) > node_out[i] else node for node in map_node]
     # reshape the list to a square matrix
     map_node = np.array(map_node)
     map_node = map_node.reshape([(N+1),(N+1)])
     
     ##################################################
     # Contents generation from here
-
-    # comment about setting
-    print( " * Size %d x %d (M=%d), R=%dkOhm, C=%dnF, V=%dV" % (N,N,M,R,C,V) )
 
     # rows of resisters
     count_r = 1
@@ -61,7 +60,7 @@ if __name__=='__main__':
             count_c = count_c + 1
     
     # input
-    print( "V1 N%04d 0 AC %dV" % (node_in, V) )
+    print( "V1 N%03d 0 AC %dV" % (node_in, V) )
 
     # simulation setups
     print( ".ac oct 1 10k 10k" )
