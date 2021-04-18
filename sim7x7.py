@@ -1,16 +1,20 @@
 import numpy as np
 import subprocess
 import re
+import os
 
 
 #####################################
 # Global variables
 
 
+# Environment Key
+env_key = 1 # 0: Linux, 1: Windows, 2: Mac
+
 # PATH to LTspice application and configuration files
 # **NOTE** You MUST change them for your environment!!
-file_exe = '/mnt/c/Program Files/LTC/LTspiceXVII/XVIIx64.exe'
-path_current =  '/mnt/c/Users/shuhe/Repositories/LatticeCircuit'
+file_exe = 'C:\\Program Files\\LTC\\LTspiceXVII\\XVIIx64.exe'
+path_current = os.getcwd()
 filename_net_base = 'base.net'
 
 # Size of circuit
@@ -72,7 +76,12 @@ def compute_changes_in_components(p, f, p_R=pos_R, p_C=pos_C):
 
 # generate net file based on arrays of resistance and capacitance
 def generate_netlist(R, C):
-    with open(path_current+str('/')+filename_net_base) as f:
+    if env_key == 1:
+        file_path = path_current+str('/')+filename_net_base
+    else:
+        file_path = path_current+str('\\')+filename_net_base
+    
+    with open(file_path) as f:
         data_lines = f.read()
     for i in range(R.size):
         data_lines = re.sub(r'R%d\s([a-zA-Z0-9_]+)\s([a-zA-Z0-9_]+)\s.+(.)\s' % i, r'R%d \1 \2 %f\3\n' % (i,R[i]), data_lines)
@@ -83,7 +92,12 @@ def generate_netlist(R, C):
 
 # save a generated netlist data to a temporary net file
 def save_netlist(netlist,filename='tmp.net'):
-    with open(path_current+str('/')+filename, mode='w') as f:
+    if env_key == 1:
+        file_path = path_current+str('/')+filename
+    else:
+        file_path = path_current+str('\\')+filename
+    
+    with open(file_path, mode='w') as f:
         f.write(netlist)
     pass
 
@@ -91,8 +105,14 @@ def save_netlist(netlist,filename='tmp.net'):
 # execute LTspice with the temporary net file
 def run_ltspice(filename='tmp.net'):
     ret = []
-    subprocess.run([file_exe, '-b', path_current+str('/')+filename])
-    with open(path_current+str('/')+re.sub('.net','.log',filename)) as f:
+    if env_key == 1:
+        file_path = path_current+str('/')
+    else:
+        file_path = path_current+str('\\')
+    print("Subprocess is launching with %s..." % (file_path+filename) )
+    subprocess.run([file_exe, '-b', file_path+filename])
+    print("Subprocess is closed.")
+    with open(file_path+re.sub('.net','.log',filename)) as f:
         data_lines = f.read()
     try:
         m = re.search(r'v\(1\)=\(([+-]?[0-9]+[\.]?[0-9]+).+,([+-]?[0-9]+[\.]?[0-9]+).+\)',data_lines)
