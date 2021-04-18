@@ -75,9 +75,9 @@ def generate_netlist(R, C):
     with open(path_current+str('/')+filename_net_base) as f:
         data_lines = f.read()
     for i in range(R.size):
-        data_lines = re.sub('R%d\s([a-zA-Z0-9_]+)\s([a-zA-Z0-9_]+)\s.+(.)\s' % i, 'R%d \\1 \\2 %f\\3\n' % (i,R[i]), data_lines)
+        data_lines = re.sub(r'R%d\s([a-zA-Z0-9_]+)\s([a-zA-Z0-9_]+)\s.+(.)\s' % i, r'R%d \1 \2 %f\3\n' % (i,R[i]), data_lines)
     for i in range(C.size):
-        data_lines = re.sub('C%d\s([a-zA-Z0-9_]+)\s([a-zA-Z0-9_]+)\s.+(.)\s' % i, 'C%d \\1 \\2 %f\\3\n' % (i,C[i]), data_lines)
+        data_lines = re.sub(r'C%d\s([a-zA-Z0-9_]+)\s([a-zA-Z0-9_]+)\s.+(.)\s' % i, r'C%d \1 \2 %f\3\n' % (i,C[i]), data_lines)
     return data_lines
 
 
@@ -95,10 +95,10 @@ def run_ltspice(filename='tmp.net'):
     with open(path_current+str('/')+re.sub('.net','.log',filename)) as f:
         data_lines = f.read()
     try:
-        m = re.search('v\(1\)=\(([+-]?[0-9]+[\.]?[0-9]+).+,([+-]?[0-9]+[\.]?[0-9]+).+\)',data_lines)
+        m = re.search(r'v\(1\)=\(([+-]?[0-9]+[\.]?[0-9]+).+,([+-]?[0-9]+[\.]?[0-9]+).+\)',data_lines)
         ret.append(float(m.group(1)))
         ret.append(float(m.group(2)))
-        m = re.search('v\(2\)=\(([+-]?[0-9]+[\.]?[0-9]+).+,([+-]?[0-9]+[\.]?[0-9]+).+\)',data_lines)
+        m = re.search(r'v\(2\)=\(([+-]?[0-9]+[\.]?[0-9]+).+,([+-]?[0-9]+[\.]?[0-9]+).+\)',data_lines)
         ret.append(float(m.group(1)))
         ret.append(float(m.group(2)))
     except AttributeError as e:
