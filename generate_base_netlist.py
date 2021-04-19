@@ -19,6 +19,7 @@ if __name__=='__main__':
     V = args.V
     F = args.F
     D = args.D
+    Ds = int(D*0.8)
 
     N = (7+1)*M # N x N lattice
 
@@ -72,6 +73,6 @@ if __name__=='__main__':
     print( ".tran %dm" % D )
     for i in range(len(node_out)):
         #print( ".meas AC V(%d) FIND V(%d) AT 10k" % (i+1, i+1) )
-        print( ".meas TRAN V(%d) MAX V(%d) FROM 5m TO 10m" % (i+1, i+1) )
+        print( ".meas TRAN V(%d) MAX V(%d) FROM %dm TO %dm" % (i+1, i+1, Ds, D) )
     print( ".backanno" )
     print( ".end" )
