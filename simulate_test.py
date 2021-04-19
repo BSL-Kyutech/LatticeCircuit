@@ -13,5 +13,7 @@ if __name__=='__main__':
     data_in, data_out = sim.run_simulation(p_touch, f_touch)
 
     # Show data
+    print('==== Contents in data_in ====')
     print(data_in)
+    print('==== Contents in data_out ====')
     print(data_out)

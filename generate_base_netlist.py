@@ -9,12 +9,14 @@ if __name__=='__main__':
     parser.add_argument("--R", help="resistance (kOhm)", default=1, type=int)
     parser.add_argument("--C", help="capacitance (nF)", default=1, type=int)
     parser.add_argument("--V", help="input voltage (V)", default=1, type=int)
+    parser.add_argument("--F", help="input frequency (Hz)", default=1000, type=int)
     args = parser.parse_args()
 
     M = args.M
     R = args.R
     C = args.C
     V = args.V
+    F = args.F
 
     N = (7+1)*M # N x N lattice
 
@@ -60,11 +62,14 @@ if __name__=='__main__':
             count_c = count_c + 1
     
     # input
-    print( "V1 N%03d 0 AC %dV" % (node_in, V) )
+    #print( "V1 N%03d 0 AC %dV" % (node_in, V) )
+    print( "V1 N%03d 0 SINE(0 %d %d)" % (node_in, V, F) )
 
     # simulation setups
-    print( ".ac oct 1 10k 10k" )
+    #print( ".ac oct 1 10k 10k" )
+    print( ".tran 10m" )
     for i in range(len(node_out)):
-        print( ".meas AC V(%d) FIND V(%d) AT 10k" % (i+1, i+1) )
+        #print( ".meas AC V(%d) FIND V(%d) AT 10k" % (i+1, i+1) )
+        print( ".meas TRAN V(%d) MAX V(%d) FROM 5m TO 10m" % (i+1, i+1) )
     print( ".backanno" )
     print( ".end" )

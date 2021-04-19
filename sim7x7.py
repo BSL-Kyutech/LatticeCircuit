@@ -109,18 +109,19 @@ def run_ltspice(filename='tmp.net'):
         file_path = path_current+str('/')
     else:
         file_path = path_current+str('\\')
-    print("Subprocess is launching with %s..." % (file_path+filename) )
+    print("Launching a subprocess with %s..." % (file_path+filename) )
     subprocess.run([file_exe, '-b', file_path+filename])
     print("Subprocess is closed.")
+    print("Reading data from %s..." % (file_path+re.sub('.net','.log',filename)) )
     with open(file_path+re.sub('.net','.log',filename)) as f:
         data_lines = f.read()
     try:
-        m = re.search(r'v\(1\)=\(([+-]?[0-9]+[\.]?[0-9]+).+,([+-]?[0-9]+[\.]?[0-9]+).+\)',data_lines)
-        ret.append(float(m.group(1)))
-        ret.append(float(m.group(2)))
-        m = re.search(r'v\(2\)=\(([+-]?[0-9]+[\.]?[0-9]+).+,([+-]?[0-9]+[\.]?[0-9]+).+\)',data_lines)
-        ret.append(float(m.group(1)))
-        ret.append(float(m.group(2)))
+        for i in range(48):
+            #m = re.search(r'v\(%d\)=\(([+-]?[0-9]+[\.]?[0-9]+).+,([+-]?[0-9]+[\.]?[0-9]+).+\)' % (i+1), data_lines)
+            #ret.append(float(m.group(1)))
+            #ret.append(float(m.group(2)))
+            m = re.search(r'v\(%d\): MAX\(v\(%d\)\)=([+-]?[0-9]+[\.]?[0-9]+).+ FROM ([+-]?[0-9]+[\.]?[0-9]+).+ TO ([+-]?[0-9]+[\.]?[0-9]+).+' % (i+1, i+1), data_lines)
+            ret.append(float(m.group(1)))
     except AttributeError as e:
         print('catch AttributeError:', e)
         return None
@@ -139,11 +140,9 @@ def run_simulation(p_touch, f_touch):
             dR, dC = compute_changes_in_components(p,f)
             netlist = generate_netlist(R+dR, C+dC)
             save_netlist(netlist)
-            print("done.")
             while True:
                 print("Running LTspice...")
                 x=run_ltspice()
-                print("done.")
                 if x is None:
                     print("No output obtained.")
                     print("Going to re-try")
