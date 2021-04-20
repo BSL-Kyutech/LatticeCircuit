@@ -123,7 +123,7 @@ def run_ltspice(filename='tmp.net'):
             m = re.search(r'v\(%d\): MAX\(v\(%d\)\)=([+-]?[0-9]+[\.]?[0-9]+).+ FROM ([+-]?[0-9]+[\.]?[0-9]+).+ TO ([+-]?[0-9]+[\.]?[0-9]+).+' % (i+1, i+1), data_lines)
             ret.append(float(m.group(1)))
     except AttributeError as e:
-        print('catch AttributeError:', e)
+        print('AttributeError: ', e)
         return None
     return np.array(ret)
 

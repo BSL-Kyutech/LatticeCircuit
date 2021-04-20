@@ -11,6 +11,8 @@ if __name__=='__main__':
     parser.add_argument("--V", help="input voltage (V)", default=1, type=int)
     parser.add_argument("--F", help="input frequency (Hz)", default=1000, type=int)
     parser.add_argument("--D", help="simulation duration (msec)", default=1000, type=int)
+    parser.add_argument('-t', '--tran', help='select .tran analysis', action='store_true', default=True)
+    parser.add_argument('-d', '--dc', help='select .dc analysis', action='store_true')
     args = parser.parse_args()
 
     M = args.M
@@ -20,6 +22,8 @@ if __name__=='__main__':
     F = args.F
     D = args.D
     Ds = int(D*0.8)
+    dc_flag = args.dc
+    tran_flag = args.tran
 
     N = (7+1)*M # N x N lattice
 
