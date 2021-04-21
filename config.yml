@@ -1,0 +1,11 @@
+# Absolute path to the executable file of LTspice
+ltspice: 'C:\Program Files\LTC\LTspiceXVII\XVIIx64.exe'
+
+# Absolute path to your working directory
+working_dir: 'C:\Users\shuhe\Repositories\LatticeCircuit'
+
+# Path delimiter of you environment
+delimiter: '\'
+
+# Filename of your base netlist file
+base_netlist: 'base.net'

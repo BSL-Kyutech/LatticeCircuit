@@ -1,6 +1,6 @@
-import argparse
 import numpy as np
 import re
+import argparse
 
 
 if __name__=='__main__':
@@ -10,7 +10,7 @@ if __name__=='__main__':
     parser.add_argument("--C", help="capacitance (nF)", default=1, type=int)
     parser.add_argument("--V", help="input voltage (V)", default=1, type=int)
     parser.add_argument("--F", help="input frequency (Hz)", default=1000, type=int)
-    parser.add_argument("--D", help="simulation duration (msec)", default=1000, type=int)
+    parser.add_argument("--D", help="simulation duration (msec)", default=100, type=int)
     parser.add_argument('-t', '--tran', help='select .tran analysis', action='store_true', default=True)
     parser.add_argument('-d', '--dc', help='select .dc analysis', action='store_true')
     args = parser.parse_args()
@@ -49,6 +49,9 @@ if __name__=='__main__':
     
     ##################################################
     # Contents generation from here
+
+    # comments for simulation setup
+    print( "* M:%d, R:%d, C:%d, V:%d, F:%d, D:%d" % (M,R,C,V,F,D) )
 
     # rows of resisters
     count_r = 1
