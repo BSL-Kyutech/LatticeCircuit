@@ -1,6 +1,7 @@
 import numpy as np
 import re
 import argparse
+import sys
 
 
 if __name__=='__main__':
@@ -9,10 +10,10 @@ if __name__=='__main__':
     parser.add_argument("--R", help="resistance (kOhm)", default=10, type=int)
     parser.add_argument("--C", help="capacitance (nF)", default=1, type=int)
     parser.add_argument("--V", help="input voltage (V)", default=1, type=int)
-    parser.add_argument("--F", help="input frequency (Hz)", default=1000, type=int)
+    parser.add_argument("--F", help="input frequency (Hz)", default=False, type=int)
     parser.add_argument("--D", help="simulation duration (msec)", default=100, type=int)
-    parser.add_argument('-t', '--tran', help='select .tran analysis', action='store_true', default=True)
-    parser.add_argument('-d', '--dc', help='select .dc analysis', action='store_true')
+    parser.add_argument('-s', '--sine', help='select SINE for the input', action='store_true')
+    parser.add_argument('-p', '--pulse', help='select PULSE for the input', action='store_true')
     args = parser.parse_args()
 
     M = args.M
@@ -22,8 +23,8 @@ if __name__=='__main__':
     F = args.F
     D = args.D
     Ds = int(D*0.8)
-    dc_flag = args.dc
-    tran_flag = args.tran
+    sine_flag = args.sine
+    pulse_flag = args.pulse
 
     N = (7+1)*M # N x N lattice
 
@@ -73,7 +74,18 @@ if __name__=='__main__':
     
     # input
     #print( "V1 N%03d 0 AC %dV" % (node_in, V) )
-    print( "V1 N%03d 0 SINE(0 %d %d)" % (node_in, V, F) )
+    if F:
+        if sine_flag:
+            print( "V1 N%03d 0 SINE(0 %d %d)" % (node_in, V, F) )
+        elif pulse_flag:
+            period = 1.0/F*1000
+            print( "V1 N%03d 0 PULSE(0 %d 0 0.0001m 0.0001m %fm %fm)" % (node_in, V, period/2.0, period) )
+        else:
+            print( "netlist generation is aborted!!", file=sys.stderr )
+            print( "Select -s or -p to specify a type of power profiles!!", file=sys.stderr )
+            exit(1)
+    else:
+        print( "V1 N%03d 0 PULSE(0 %d 0 0.0001m 0.0001m %dm %dm)" % (node_in, V, D, D*2) )
 
     # simulation setups
     #print( ".ac oct 1 10k 10k" )
