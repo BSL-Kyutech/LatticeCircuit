@@ -78,7 +78,7 @@ if __name__=='__main__':
         if sine_flag:
             print( "V1 N%03d 0 SINE(0 %d %d)" % (node_in, V, F) )
         elif pulse_flag:
-            period = 1.0/F*1000
+            period = 1.0/F*1000.0
             print( "V1 N%03d 0 PULSE(0 %d 0 0.0001m 0.0001m %fm %fm)" % (node_in, V, period/2.0, period) )
         else:
             print( "netlist generation is aborted!!", file=sys.stderr )
@@ -92,6 +92,9 @@ if __name__=='__main__':
     print( ".tran %dm" % D )
     for i in range(len(node_out)):
         #print( ".meas AC V(%d) FIND V(%d) AT 10k" % (i+1, i+1) )
-        print( ".meas TRAN V(%d) MAX V(%d) FROM %dm TO %dm" % (i+1, i+1, Ds, D) )
+        if F and pulse_flag:
+            print( ".meas TRAN V(%d) FIND V(%d) WHEN V(N%03d)=%d cross=%d" % (i+1, i+1, node_in, int(V/2.0), 2*int(D/period)) )
+        else:
+            print( ".meas TRAN V(%d) MAX V(%d) FROM %dm TO %dm" % (i+1, i+1, Ds, D) )
     print( ".backanno" )
     print( ".end" )

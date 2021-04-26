@@ -54,11 +54,14 @@ def initialize_components():
 
 
 # compute changes in electrical components (emulation of touch)
-def compute_changes_in_components(p, f, p_R=pos_R, p_C=pos_C):
+def compute_changes_in_components(p, f, alpha, beta, sigma, p_R=pos_R, p_C=pos_C):
     p_rep_R = np.repeat(p[None,:], (N+(N+1)+1)*N, axis=0)
     p_rep_C = np.repeat(p[None,:], (N+1)*(N+1), axis=0)
-    dR = -1.0 * f * np.exp( -1 * np.linalg.norm(p_R-p_rep_R,axis=1) / 2.0)
-    dC = 1.0 * f * np.exp( -1 * np.linalg.norm(p_C-p_rep_C,axis=1) / 2.0)
+    #dR = -1.0 * f * np.exp( -1 * np.linalg.norm(p_R-p_rep_R,axis=1) / 2.0)
+    #dC = 1.0 * f * np.exp( -1 * np.linalg.norm(p_C-p_rep_C,axis=1) / 2.0)
+    dR = -1.0 * alpha * f * np.exp( -1 * np.power(np.linalg.norm(p_R-p_rep_R,axis=1),2) / sigma)
+    dC =  1.0 * beta  * f * np.exp( -1 * np.power(np.linalg.norm(p_C-p_rep_C,axis=1),2) / sigma)
+    
     return dR,dC
 
 
@@ -95,6 +98,8 @@ def run_ltspice(filename='tmp.net'):
     try:
         for i in range(48):
             m = re.search(r'v\(%d\): MAX\(v\(%d\)\)=([+-]?[0-9]+[\.]?[0-9]+) FROM ([+-]?[0-9]+[\.]?[0-9]+) TO ([+-]?[0-9]+[\.]?[0-9]+)' % (i+1, i+1), data_lines)
+            if not m:
+                m = re.search(r'v\(%d\): v\(%d\)=([+-]?[0-9]+[\.]?[0-9]+) at ([+-]?[0-9]+[\.]?[0-9]+)' % (i+1, i+1), data_lines)
             ret.append(float(m.group(1)))
     except AttributeError as e:
         print('AttributeError: ', e)
@@ -103,7 +108,7 @@ def run_ltspice(filename='tmp.net'):
 
 
 # repeat LTspice simulation for each position and force that are given
-def run_simulation(p_touch, f_touch):
+def run_simulation(p_touch, f_touch, alpha=1.0, beta=1.0, sigma=10.0):
     data_in=[]
     data_out=[]
     R, C = initialize_components()
@@ -111,7 +116,7 @@ def run_simulation(p_touch, f_touch):
         for f in f_touch:
             print("x:%1.1f, y:%1.1f, f:%1.1f" % (p[0], p[1], f))
             print("Making netlist...")
-            dR, dC = compute_changes_in_components(p,f)
+            dR, dC = compute_changes_in_components(p, f, alpha, beta, sigma)
             netlist = generate_netlist(R+dR, C+dC)
             save_netlist(netlist)
             while True:
