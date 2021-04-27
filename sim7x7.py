@@ -20,7 +20,11 @@ with open('config.yml') as file:
 with open(working_dir+path_delimiter+filename_net_base) as f:
     data_lines = f.read()
     m = re.search(r'M:([0-9]+),', data_lines)
+    r = re.search(r'R:([0-9]+),', data_lines)
+    c = re.search(r'C:([0-9]+),', data_lines)
     M=int(m.group(1))
+    R_init=int(r.group(1))
+    C_init=int(c.group(1))
     
 N = (7+1)*M # Total length of a side
 
@@ -48,8 +52,8 @@ pos_C = np.array(pos_C)
 
 # initialize arrays of resistance and capacitance
 def initialize_components():
-    R = 1 *np.ones((N+(N+1)+1)*N) # kOhm
-    C = 1 *np.ones((N+1)*(N+1)) # nF
+    R = R_init *np.ones((N+(N+1)+1)*N) # kOhm
+    C = C_init *np.ones((N+1)*(N+1)) # nF
     return R, C
 
 
@@ -112,6 +116,19 @@ def run_simulation(p_touch, f_touch, alpha=1.0, beta=1.0, sigma=10.0):
     data_in=[]
     data_out=[]
     R, C = initialize_components()
+    if len(p_touch)==0:
+        netlist = generate_netlist(R, C)
+        save_netlist(netlist)
+        while True:
+            print("Running LTspice...")
+            x=run_ltspice()
+            if x is None:
+                print("No output obtained.")
+                print("Going to re-try")
+            else:
+                break
+        data_in.append(x)
+        data_out.append([])
     for p in p_touch:
         for f in f_touch:
             print("x:%1.1f, y:%1.1f, f:%1.1f" % (p[0], p[1], f))
