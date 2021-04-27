@@ -1,10 +1,11 @@
+import sys
 import numpy as np
 import argparse
 import sim7x7 as sim
 
 
 if __name__=='__main__':
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser()    
     parser.add_argument('-g', '--grid', help='flag for grid search', action='store_true')
     parser.add_argument("--Dp", help="divide of position", default=3, type=int)
     parser.add_argument("--Df", help="divide of force", default=3, type=int)
@@ -12,8 +13,14 @@ if __name__=='__main__':
     parser.add_argument("--X", help="x position", default=0.5, type=float)
     parser.add_argument("--Y", help="y position", default=0.5, type=float)
     parser.add_argument("--F", help="force", default=0.5, type=float)
+    parser.add_argument("--Alpha", help="intensity of resistance change by touching", default=1.0, type=float)
+    parser.add_argument("--Beta", help="intensity of capacitance change by touching", default=1.0, type=float)
+    parser.add_argument("--Sigma", help="spacial variance of change by touching", default=0.5, type=float)
     
     args = parser.parse_args()
+    alpha = args.Alpha
+    beta = args.Beta
+    sigma = args.Sigma
     specify_flag = args.specify
     grid_flag = args.grid
     if specify_flag:
@@ -31,12 +38,11 @@ if __name__=='__main__':
         p_touch = p_touch.T
         f_touch = np.linspace(0.1, 1.0, 2)
     else:
-        print( "No valid option is specified" )
-        print( "See -h for finding valid options" )
-        exit(1)
+        p_touch = []
+        f_touch = []
     
     # Run simulation
-    vols, params = sim.run_simulation(p_touch, f_touch)    
+    vols, params = sim.run_simulation(p_touch, f_touch, alpha=alpha, beta=beta, sigma=sigma)
 
     # Show results
     print('==== Measured voltages ====')
