@@ -53,11 +53,9 @@ if __name__=='__main__':
     # make a map of all nodes
     map_node = np.arange((N+1)*(N+1))
     map_node = map_node + 1
+
     # translate to node labels
-
-    # 全部入れ替えてから番号をそろえるようにしないとどんどんずれる！！！！
     map_node = ["N%03d" % node for node in map_node]
-
     # place output terminals. if -g was given, place edge GND terminals as well.
     for i in range(len(node_out)):
         map_node = ["%d"%(i+1) if node==("N%03d" % node_out[i]) else node for node in map_node]
