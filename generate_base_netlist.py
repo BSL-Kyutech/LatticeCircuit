@@ -8,6 +8,7 @@ if __name__=='__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("M", help="M edges between two input/output nodes (terminals)", type=int)
     parser.add_argument("--R", help="resistance (kOhm)", default=10, type=int)
+    parser.add_argument("--pulldown", help="resistance (kOhm)", default=10000, type=int)
     parser.add_argument("--C", help="capacitance (nF)", default=1, type=int)
     parser.add_argument("--V", help="input voltage (V)", default=1, type=int)
     parser.add_argument("--F", help="input frequency (Hz)", default=False, type=int)
@@ -23,6 +24,7 @@ if __name__=='__main__':
     V = args.V
     F = args.F
     D = args.D
+    pulldown = args.pulldown
     Ds = int(D*0.8)
     sine_flag = args.sine
     pulse_flag = args.pulse
@@ -95,24 +97,28 @@ if __name__=='__main__':
                 count_r = count_r + 1
     # columns of resisters
     for i in range(N):
-        for j in range(N+1):
+        for j in range(N+1): 
             if map_node[i,j] == "0" and map_node[i+1,j] == "0":
                 pass
             else:
                 print( "R%d %s %s %dk" % (count_r, map_node[i,j], map_node[i+1,j], R) )
                 count_r = count_r + 1
+    # pulldown resisters for output terminals
+    if pulldown < 10000:
+        for i in range(7*7-1):
+            print( "R%d %s %s %dk" % (count_r, i+1, 0, pulldown) )
+            count_r = count_r + 1
     # capacitors
-    count_c = 1
-    for i in range(N+1):
-        for j in range(N+1):
-            if map_node[i,j] == "0":
-                pass
-            else:
-                print( "C%d %s 0 %dn" % (count_c, map_node[i,j], C) )
-                count_c = count_c + 1
-    
+    if C > 0:
+        count_c = 1
+        for i in range(N+1):
+            for j in range(N+1):
+                if map_node[i,j] == "0":
+                    pass
+                else:
+                    print( "C%d %s 0 %dn" % (count_c, map_node[i,j], C) )
+                    count_c = count_c + 1
     # input
-    #print( "V1 N%03d 0 AC %dV" % (node_in, V) )
     if F:
         if sine_flag:
             print( "V1 N%03d 0 SINE(0 %d %d)" % (node_in, V, F) )
