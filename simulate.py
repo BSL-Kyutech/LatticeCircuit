@@ -46,7 +46,17 @@ if __name__=='__main__':
 
     # Show results
     print('==== Measured voltages ====')
-    print(vols)
+    count = 0
+    for i in range(7):
+        print('[', end=' ')
+        for j in range(7):
+            if i==3 and j==3:
+                print('  x  ', end=' ')
+            else:
+                print('%3.3f' % vols[0,count], end=' ')
+                count = count + 1
+        print(']')
+    #print(vols)
     print('==== Emulated touching ====')
     print(params)
     

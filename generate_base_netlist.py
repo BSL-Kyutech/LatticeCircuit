@@ -9,10 +9,12 @@ if __name__=='__main__':
     parser.add_argument("M", help="M edges between two input/output nodes (terminals)", type=int)
     parser.add_argument("--R", help="resistance (kOhm)", default=10, type=int)
     parser.add_argument("--pulldown", help="resistance (kOhm)", default=10000, type=int)
-    parser.add_argument("--C", help="capacitance (nF)", default=1, type=int)
+    parser.add_argument("--sink", help="resistance (kOhm)", default=1, type=int)
+    parser.add_argument("--C", help="capacitance (nF)", default=0, type=int)
     parser.add_argument("--V", help="input voltage (V)", default=1, type=int)
+    parser.add_argument("--A", help="input current (mA)", default=False, type=int)
     parser.add_argument("--F", help="input frequency (Hz)", default=False, type=int)
-    parser.add_argument("--D", help="simulation duration (msec)", default=100, type=int)
+    parser.add_argument("--D", help="simulation duration (msec)", default=10, type=int)
     parser.add_argument('-s', '--sine', help='select SINE for the input', action='store_true')
     parser.add_argument('-p', '--pulse', help='select PULSE for the input', action='store_true')
     parser.add_argument('-g', '--ground', help='set nodes on outer edges as GND', action='store_true')
@@ -22,9 +24,11 @@ if __name__=='__main__':
     R = args.R
     C = args.C
     V = args.V
+    A = args.A
     F = args.F
     D = args.D
     pulldown = args.pulldown
+    sink = args.sink
     Ds = int(D*0.8)
     sine_flag = args.sine
     pulse_flag = args.pulse
@@ -108,6 +112,17 @@ if __name__=='__main__':
         for i in range(7*7-1):
             print( "R%d %s %s %dk" % (count_r, i+1, 0, pulldown) )
             count_r = count_r + 1
+    # pulldown resisters for four corner nodes
+    if not gnd_flag:
+        node_corner = [1, N+1, N*(N+1)+1, (N+1)*(N+1)]
+        print( "R%d %s %s %d" % (count_r, map_node[0,0], 0, sink) )
+        count_r = count_r + 1
+        print( "R%d %s %s %d" % (count_r, map_node[0,N], 0, sink) )
+        count_r = count_r + 1
+        print( "R%d %s %s %d" % (count_r, map_node[N,0], 0, sink) )
+        count_r = count_r + 1
+        print( "R%d %s %s %d" % (count_r, map_node[N,N], 0, sink) )
+        count_r = count_r + 1
     # capacitors
     if C > 0:
         count_c = 1
@@ -119,7 +134,9 @@ if __name__=='__main__':
                     print( "C%d %s 0 %dn" % (count_c, map_node[i,j], C) )
                     count_c = count_c + 1
     # input
-    if F:
+    if A:
+        print( "I1 0 N%03d PULSE(0A %dmA 0 0.0001m 0.0001m %dm %dm)" % (node_in, A, D, D*2) )
+    elif F:
         if sine_flag:
             print( "V1 N%03d 0 SINE(0 %d %d)" % (node_in, V, F) )
         elif pulse_flag:
@@ -131,6 +148,7 @@ if __name__=='__main__':
             exit(1)
     else:
         print( "V1 N%03d 0 PULSE(0 %d 0 0.0001m 0.0001m %dm %dm)" % (node_in, V, D, D*2) )
+        
 
     # simulation setups
     #print( ".ac oct 1 10k 10k" )
