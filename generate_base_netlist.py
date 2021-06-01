@@ -9,7 +9,7 @@ if __name__=='__main__':
     parser.add_argument("M", help="M edges between two input/output nodes (terminals)", type=int)
     parser.add_argument("--R", help="resistance (kOhm)", default=10, type=int)
     parser.add_argument("--pulldown", help="resistance (kOhm)", default=10000, type=int)
-    parser.add_argument("--sink", help="resistance (kOhm)", default=1, type=int)
+    parser.add_argument("--sink", help="resistance (Ohm)", default=1, type=int)
     parser.add_argument("--C", help="capacitance (nF)", default=0, type=int)
     parser.add_argument("--V", help="input voltage (V)", default=1, type=int)
     parser.add_argument("--A", help="input current (mA)", default=False, type=int)
@@ -18,6 +18,7 @@ if __name__=='__main__':
     parser.add_argument('-s', '--sine', help='select SINE for the input', action='store_true')
     parser.add_argument('-p', '--pulse', help='select PULSE for the input', action='store_true')
     parser.add_argument('-g', '--ground', help='set nodes on outer edges as GND', action='store_true')
+    parser.add_argument('-op', '--op', help='insert operation point analysis', default=True, action='store_true')
     args = parser.parse_args()
 
     M = args.M
@@ -33,6 +34,7 @@ if __name__=='__main__':
     sine_flag = args.sine
     pulse_flag = args.pulse
     gnd_flag = args.ground
+    dcop_flag = args.op
 
     N = (7+1)*M # N+1 x N+1 lattice
 
@@ -134,7 +136,9 @@ if __name__=='__main__':
                     print( "C%d %s 0 %dn" % (count_c, map_node[i,j], C) )
                     count_c = count_c + 1
     # input
-    if A:
+    if dcop_flag:
+        print( "I1 0 N%03d 1mA" % (node_in) )
+    elif A:
         print( "I1 0 N%03d PULSE(0A %dmA 0 0.0001m 0.0001m %dm %dm)" % (node_in, A, D, D*2) )
     elif F:
         if sine_flag:
@@ -152,12 +156,15 @@ if __name__=='__main__':
 
     # simulation setups
     #print( ".ac oct 1 10k 10k" )
-    print( ".tran %dm" % D )
-    for i in range(len(node_out)):
-        #print( ".meas AC V(%d) FIND V(%d) AT 10k" % (i+1, i+1) )
-        if F and pulse_flag:
-            print( ".meas TRAN V(%d) FIND V(%d) WHEN V(N%03d)=%d cross=%d" % (i+1, i+1, node_in, int(V/2.0), 2*int(D/period)) )
-        else:
-            print( ".meas TRAN V(%d) MAX V(%d) FROM %dm TO %dm" % (i+1, i+1, Ds, D) )
+    if dcop_flag:
+        print( ".op")
+    else:
+        print( ".tran %dm" % D )
+        for i in range(len(node_out)):
+            #print( ".meas AC V(%d) FIND V(%d) AT 10k" % (i+1, i+1) )
+            if F and pulse_flag:
+                print( ".meas TRAN V(%d) FIND V(%d) WHEN V(N%03d)=%d cross=%d" % (i+1, i+1, node_in, int(V/2.0), 2*int(D/period)) )
+            else:
+                print( ".meas TRAN V(%d) MAX V(%d) FROM %dm TO %dm" % (i+1, i+1, Ds, D) )
     print( ".backanno" )
     print( ".end" )
