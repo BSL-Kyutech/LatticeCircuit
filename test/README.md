@@ -15,3 +15,14 @@ $ python check_resistance.py 3 2.4
 
 ## measure_voltages.py
 中央に電流源，四隅にGNDを置いて各ノードの電圧を動作点解析するスクリプト．接触はMxMの矩形領域が50%の抵抗値になるようにシミュレート．
+
+## plot_measured_voltages.py
+pickleされたデータを使ってグラフを描画．
+
+# メモ
+## 10kOhm
+- M:3, R:2.4kOhm
+- M:5, R:2.1kOhm
+- M:7, R:1.9kOhm
+- M:9, R:1.8kOhm
+- M:27, R:1.5kOhm
