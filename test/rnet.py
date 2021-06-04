@@ -94,6 +94,7 @@ def generate_touched_netlist(filename, x, y, gamma):
     M=int(m.group(1))
     R=float(r.group(1))
     N = (7+1)*M # N+1 x N+1 lattice
+    map_node = generate_map_node(M)
 
     int_x = int(x*(N+1))
     int_y = int(y*(N+1))
