@@ -32,7 +32,7 @@ if __name__=='__main__':
     d={}
     for i in range(len(M_list)):
         N = (7+1)*M_list[i] # N+1 x N+1 lattice
-        with open('%d_%2.1fk_results.pickle' % (M_list[i], R_list[i]), mode="rb") as f:
+        with open('%d_%2.2fk_results.pickle' % (M_list[i], R_list[i]), mode="rb") as f:
             d = pickle.load(f)
             print('Loaded pickled data in %d_%2.1fk_results.pickle' % (M_list[i], R_list[i]))
         points = [np.array([0,0]), np.array([0.5,0.5]), np.array([0.25,0.25]), np.array([0.5,0.25])]
