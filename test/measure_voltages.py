@@ -21,7 +21,7 @@ with open('config.yml') as file:
 
 #####################################
 # Functions
-def generate_touched_netlist(filename, x, y):
+def generate_touched_netlist(filename, x, y, gamma):
     # Read the parameter M from the base netlist file
     with open(filename) as f:
         data_lines = f.read()
@@ -44,14 +44,14 @@ def generate_touched_netlist(filename, x, y):
             for j in range(M):
                 if (origin_x + i) >= 0 and (origin_y + j) >= 0 and (origin_x + i) < N+1 and (origin_y + j) < N+1 :
                     data_lines = re.sub(r'R([0-9]+)\s%s\s%s\s([+-]?[0-9]+[\.]?[0-9]+)k' % (map_node[origin_x+i,origin_y+j], map_node[origin_x+i,origin_y+j+1]), 
-                                        r'R\1 %s %s %2.2fk' % (map_node[origin_x+i,origin_y+j], map_node[origin_x+i,origin_y+j+1], R*0.5), 
+                                        r'R\1 %s %s %2.2fk' % (map_node[origin_x+i,origin_y+j], map_node[origin_x+i,origin_y+j+1], R*gamma), 
                                         data_lines)
         # columns of resisters
         for i in range(M):
             for j in range(M):
                 if (origin_x + i) >= 0 and (origin_y + j) >= 0 and (origin_x + i) < N+1 and (origin_y + j) < N+1:
                     data_lines = re.sub(r'R([0-9]+)\s%s\s%s\s([+-]?[0-9]+[\.]?[0-9]+)k' % (map_node[origin_x+i,origin_y+j], map_node[origin_x+i+1,origin_y+j]), 
-                                        r'R\1 %s %s %2.2fk' % (map_node[origin_x+i,origin_y+j], map_node[origin_x+i+1,origin_y+j], R*0.5), 
+                                        r'R\1 %s %s %2.2fk' % (map_node[origin_x+i,origin_y+j], map_node[origin_x+i+1,origin_y+j], R*gamma), 
                                         data_lines)
         #print(data_lines)
         #exit(1)
@@ -177,25 +177,25 @@ if __name__=='__main__':
     baseline=analyze_operating_points(filename)
 
     # case 1 (x,y)=(0,0)
-    filename_out = generate_touched_netlist(filename,0.0,0.0)
+    filename_out = generate_touched_netlist(filename,0.1,0.4, 0.5)
     case1=analyze_operating_points(filename_out)
     print('---')
     print(case1 - baseline)
 
     # case 2 (x,y)=(0.5,0.5)
-    filename_out = generate_touched_netlist(filename,0.5,0.5)
+    filename_out = generate_touched_netlist(filename,0.1,0.4, 0.25)
     case2=analyze_operating_points(filename_out)
     print('---')
     print(case2 - baseline)
 
     # case 3 (x,y)=(0.25,0.25)
-    filename_out = generate_touched_netlist(filename,0.25,0.25)
+    filename_out = generate_touched_netlist(filename,0.2,0.3, 0.5)
     case3=analyze_operating_points(filename_out)
     print('---')
     print(case3 - baseline)
 
     # case 4 (x,y)=(0.5,0.25)
-    filename_out = generate_touched_netlist(filename,0.5,0.25)
+    filename_out = generate_touched_netlist(filename,0.2,0.3, 0.25)
     case4=analyze_operating_points(filename_out)
     print('---')
     print(case4)
@@ -209,3 +209,40 @@ if __name__=='__main__':
         pickle.dump(d, f)
 
     print('Results are pickled to %d_%2.1fk_results.pickle' % (M,R))
+
+    # # baseline
+    # baseline=analyze_operating_points(filename)
+
+    # # case 1 (x,y)=(0,0)
+    # filename_out = generate_touched_netlist(filename,0.0,0.0, 0.25)
+    # case1=analyze_operating_points(filename_out)
+    # print('---')
+    # print(case1 - baseline)
+
+    # # case 2 (x,y)=(0.5,0.5)
+    # filename_out = generate_touched_netlist(filename,0.5,0.5, 0.25)
+    # case2=analyze_operating_points(filename_out)
+    # print('---')
+    # print(case2 - baseline)
+
+    # # case 3 (x,y)=(0.25,0.25)
+    # filename_out = generate_touched_netlist(filename,0.25,0.25, 0.25)
+    # case3=analyze_operating_points(filename_out)
+    # print('---')
+    # print(case3 - baseline)
+
+    # # case 4 (x,y)=(0.5,0.25)
+    # filename_out = generate_touched_netlist(filename,0.5,0.25, 0.25)
+    # case4=analyze_operating_points(filename_out)
+    # print('---')
+    # print(case4)
+    # print('---')
+    # print(baseline)
+    # print('---')
+    # print(case4 - baseline)
+
+    # d={'case1':case1 - baseline,'case2':case2 - baseline,'case3':case3 - baseline,'case4':case4 - baseline}
+    # with open('%d_%2.1fk_results.pickle' % (M,R), mode="wb") as f:
+    #     pickle.dump(d, f)
+
+    # print('Results are pickled to %d_%2.1fk_results.pickle' % (M,R))
