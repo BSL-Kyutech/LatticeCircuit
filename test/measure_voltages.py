@@ -8,7 +8,7 @@ import rnet
 
 def yes_no_input(M,R,X,Y,F):
     while True:
-        choice = input("Do you save results to %d_%2.2fk_results_X%s_Y%s_F%s.pickle ?: "%(M,R,X,Y,F)).lower()
+        choice = input('Do you save results to %d_%2.2fk_results_X%2.2f-%2.2f_Y%2.2f-%2.2f_F%2.2f-%2.2f.pickle' % (M,R,X[0],X[-1],Y[0],Y[-1],F[0],F[-1]) ).lower()
         if choice in ['y', 'ye', 'yes']:
             return True
         elif choice in ['n', 'no']:
@@ -18,11 +18,11 @@ def yes_no_input(M,R,X,Y,F):
 # Main
 if __name__=='__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--M", help="M edges between two input/output nodes (terminals)", default=13, type=int)
-    parser.add_argument("--R", help="resistance (kOhm)", default=1.7, type=float)
-    parser.add_argument("--X", help="List of touching x-positions (range in 0.0-1.0)", default=[0.25], type=float)
-    parser.add_argument("--Y", help="List of touching y-positions (range in 0.0-1.0)", default=[0.25], type=float)
-    parser.add_argument("--F", help="List of touching decay rates of R (range in 0.0-1.0)", default=[0.5], type=float)
+    parser.add_argument("-m", "--M", help="M edges between two input/output nodes (terminals)", default=13, type=int)
+    parser.add_argument("-r", "--R", help="resistance (kOhm)", default=1.7, type=float)
+    parser.add_argument("-x", "--X", help="List of touching x-positions (range in 0.0-1.0)", default=[0.25], type=float, nargs='+')
+    parser.add_argument("-y", "--Y", help="List of touching y-positions (range in 0.0-1.0)", default=[0.25], type=float, nargs='+')
+    parser.add_argument("-f", "--F", help="List of touching decay rates of R (range in 0.0-1.0)", default=[0.5], type=float, nargs='+')
     args = parser.parse_args()
 
     M = args.M
@@ -56,6 +56,7 @@ if __name__=='__main__':
         print(d['%d'%i])
 
     if yes_no_input(M,R,X,Y,F):
-        with open('%d_%2.2fk_results_X%s_Y%s_F%s.pickle' % (M,R,X,Y,F), mode="wb") as f:
+        #with open('%d_%2.2fk_results_X%s_Y%s_F%s.pickle' % (M,R,X,Y,F), mode="wb") as f:
+        with open('%d_%2.2fk_results_X%2.2f-%2.2f_Y%2.2f-%2.2f_F%2.2f-%2.2f.pickle' % (M,R,X[0],X[-1],Y[0],Y[-1],F[0],F[-1]), mode="wb") as f:
             pickle.dump(d, f)
-        print('Results are dumped to %d_%2.2fk_results_X%s_Y%s_F%s.pickle' % (M,R,X,Y,F))
+        print('Results are dumped to %d_%2.2fk_results_X%2.2f-%2.2f_Y%2.2f-%2.2f_F%2.2f-%2.2f.pickle' % (M,R,X[0],X[-1],Y[0],Y[-1],F[0],F[-1]))
