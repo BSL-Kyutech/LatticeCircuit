@@ -101,7 +101,7 @@ def generate_touched_netlist(filename, x, y, gamma):
     origin_x = int_x - int((M-1)/2)
     origin_y = int_y - int((M-1)/2)
     filename_out = '%d_%2.2fk_(%1.2f,%1.2f,%1.2f).net' % (M,R,x,y,gamma)
-    map_node = generate_map_node(M)
+    
     with open(filename) as f:
         data_lines = f.read()
         # rows of resisters
