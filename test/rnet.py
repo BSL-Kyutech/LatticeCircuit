@@ -108,14 +108,14 @@ def generate_touched_netlist(filename, x, y, gamma):
         # rows of resisters
         for i in range(M):
             for j in range(M):
-                if (origin_x + i) >= 0 and (origin_y + j) >= 0 and (origin_x + i) < N+1 and (origin_y + j) < N+1 :
+                if (origin_x + i) >= 0 and (origin_y + j) >= 0 and (origin_x + i + 1) < N+1 and (origin_y + j + 1) < N+1 :
                     data_lines = re.sub(r'R([0-9]+)\s%s\s%s\s([+-]?[0-9]+[\.]?[0-9]+)k' % (map_node[origin_x+i,origin_y+j], map_node[origin_x+i,origin_y+j+1]), 
                                         r'R\1 %s %s %2.2fk' % (map_node[origin_x+i,origin_y+j], map_node[origin_x+i,origin_y+j+1], R*gamma), 
                                         data_lines)
         # columns of resisters
         for i in range(M):
             for j in range(M):
-                if (origin_x + i) >= 0 and (origin_y + j) >= 0 and (origin_x + i) < N+1 and (origin_y + j) < N+1:
+                if (origin_x + i) >= 0 and (origin_y + j) >= 0 and (origin_x + i + 1) < N+1 and (origin_y + j + 1) < N+1:
                     data_lines = re.sub(r'R([0-9]+)\s%s\s%s\s([+-]?[0-9]+[\.]?[0-9]+)k' % (map_node[origin_x+i,origin_y+j], map_node[origin_x+i+1,origin_y+j]), 
                                         r'R\1 %s %s %2.2fk' % (map_node[origin_x+i,origin_y+j], map_node[origin_x+i+1,origin_y+j], R*gamma), 
                                         data_lines)
