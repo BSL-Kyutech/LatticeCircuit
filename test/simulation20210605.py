@@ -25,11 +25,6 @@ if __name__=='__main__':
     Y = np.linspace(0, 1.0, 100) * (np.cos(theta)+1.0)/2.0
     F = 0.5 * np.ones(100)
 
-    print(len(X))
-    print(len(Y))
-    print(len(F))
-    exit(1)
-
     # prepare the base netlist
     if not os.path.exists('./%d_%2.2fk_base.net' % (M,R)):
         netlist = rnet.generate_base_netlist(M,R)
