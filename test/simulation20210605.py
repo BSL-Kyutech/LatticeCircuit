@@ -21,8 +21,10 @@ if __name__=='__main__':
     M = 13
     R = 1.7
     theta = np.linspace(0, 2 * np.pi, 100)
-    X = np.linspace(0, 1.0, 100) * (np.sin(theta)+1.0)/2.0
-    Y = np.linspace(0, 1.0, 100) * (np.cos(theta)+1.0)/2.0
+    #X = np.linspace(0, 1.0, 100) * (np.sin(theta)+1.0)/2.0
+    X = np.linspace(0, 1.0, 100) * (np.sin(theta)/2.0) + 0.5
+    #Y = np.linspace(0, 1.0, 100) * (np.cos(theta)+1.0)/2.0
+    Y = np.linspace(0, 1.0, 100) * (np.cos(theta)/2.0) + 0.5
     F = 0.5 * np.ones(100)
 
     # prepare the base netlist
