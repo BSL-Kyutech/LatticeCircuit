@@ -68,7 +68,7 @@ $ python simulate.py -s --X=0.1 --Y=0.2 --F=0.3
 ### `measure_voltages.py`
 中央に電流源，四隅にGNDを置いて各ノードの電圧を動作点解析するためのスクリプトです．
 
-## plot_measured_voltages.py
+### `plot_measured_voltages.py`
 measure_voltages.pyの実行によって得られた結果をpickleに保存した場合において，このpickleを渡してグラフを描画するスクリプト．
 
 
