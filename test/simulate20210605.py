@@ -2,21 +2,13 @@ import numpy as np
 import argparse
 import os
 import pickle
-
-from .. import rnet
-
-
+import sys
+sys.path.append('../')
+import rnet
 
 #####################################
 # Main
 if __name__=='__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-m", "--M", help="M edges between two input/output nodes (terminals)", default=13, type=int)
-    parser.add_argument("-r", "--R", help="resistance (kOhm)", default=1.7, type=float)
-    parser.add_argument("-x", "--X", help="List of touching x-positions (range in 0.0-1.0)", default=[0.25], type=float, nargs='+')
-    parser.add_argument("-y", "--Y", help="List of touching y-positions (range in 0.0-1.0)", default=[0.25], type=float, nargs='+')
-    parser.add_argument("-f", "--F", help="List of touching decay rates of R (range in 0.0-1.0)", default=[0.5], type=float, nargs='+')
-    args = parser.parse_args()
 
     M = 13
     R = 1.7
@@ -32,7 +24,7 @@ if __name__=='__main__':
         netlist = rnet.generate_base_netlist(M,R)
     else:
         netlist = './%d_%2.2fk_base.net' % (M,R)
-
+    
     # prepare the base netlist voltages without touching
     if not os.path.exists('%d_%2.2fk_baseline.pickle' % (M,R)):
         # compute baseline voltages

@@ -8,48 +8,42 @@ import yaml
 import pickle
 
 import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 
 #####################################
 # Main
 if __name__=='__main__':
+
     parser = argparse.ArgumentParser()
-    parser.add_argument("filenames", help="pickle files storing rnet voltages", type=str, nargs='*')
+    parser.add_argument('-s', '--save', help='flag for saving', action='store_true')
     args = parser.parse_args()
 
-    for filename in args.filenames:
-        #N = (7+1)*M_list[i] # N+1 x N+1 lattice
-        with open(filename, mode="rb") as f:
-            d = pickle.load(f)
+    M=13
+    N=(7+1)*M+1
+    with open('./13_1.70k_results_helix.pickle', mode="rb") as f:
+        d = pickle.load(f)
 
-        print(len(d))
-        for i in range(len(d)):
-            fig = plt.figure(figsize=(5,5))
-            ax = fig.add_subplot(111)
-            cntr = ax.contour(d['%d'%i], colors='blue')
-            ax.clabel(cntr)
-            ax.set_aspect('equal')
+    # touching points
+    theta = np.linspace(0, 2 * np.pi, 100)
+    X = np.linspace(0, 1.0, 100) * (np.sin(theta)/2.0) + 0.5
+    Y = np.linspace(0, 1.0, 100) * (np.cos(theta)/2.0) + 0.5
+    
+    ims = []
+    fig = plt.figure(figsize=(5,5))
+    ax = fig.add_subplot(111)
 
-            plt.show()
+    def plot(indx):
+        plt.cla()
+        cntr = ax.contour(d['%d'%indx], colors='blue')
+        #ax.clabel(cntr)
+        ax.set_aspect('equal')
+        int_x = int(X[indx]*(N+1))
+        int_y = int(Y[indx]*(N+1))
+        ax.scatter(int_y, int_x, color='orange', s=750)
+    
+    ani = animation.FuncAnimation(fig, plot, frames=range(100), interval=100)
 
-    # #d={'case1':case1 - baseline,'case2':case2 - baseline,'case3':case3 - baseline,'case4':case4 - baseline}
-    # d={}
-    # for i in range(len(M_list)):
-    #     N = (7+1)*M_list[i] # N+1 x N+1 lattice
-    #     with open('%d_%2.1fk_results.pickle' % (M_list[i], R_list[i]), mode="rb") as f:
-    #         d = pickle.load(f)
-    #         print('Loaded pickled data in %d_%2.1fk_results.pickle' % (M_list[i], R_list[i]))
-    #     points = [np.array([0,0]), np.array([0.5,0.5]), np.array([0.25,0.25]), np.array([0.5,0.25])]
-    #     for j in range(4):
-    #         fig = plt.figure(figsize=(5,5))
-    #         ax = fig.add_subplot(111)
-    #         cntr = ax.contour(d['case%d'%(j+1)], colors='blue')
-    #         ax.clabel(cntr)
-    #         ax.set_aspect('equal')
-
-    #         points[j]
-    #         int_x = int(points[j][0]*(N+1))
-    #         int_y = int(points[j][1]*(N+1))
-    #         ax.scatter(int_y, int_x, color='orange', s=750)
-
-
-    #         plt.show()
+    if args.save:
+        ani.save('anim.gif', writer="imagemagic")
+    else:
+        plt.show()
