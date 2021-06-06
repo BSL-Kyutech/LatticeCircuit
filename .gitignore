@@ -3,3 +3,4 @@ __pycache__
 *.net
 *.log
 *.raw
+*.pickle

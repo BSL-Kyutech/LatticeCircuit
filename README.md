@@ -9,11 +9,27 @@
 # Demo
 注）デモはconfig.ymlが実行環境に合わせて適切に設定されていることを前提とします．config.yml自体の説明はconfig.yml内のコメントを参照してください．
 
+
+
 レポジトリをクローンして移動
 ```
 $ git clone https://github.com/BSL-Kyutech/LatticeCircuit.git
 $ cd LatticeCircuit
 ```
+
+## 全ノードの動作点解析
+
+電極間グリッド数M（観測電極の概念は無いが，サイズの表現として利用）を3，抵抗を2.4kOhmとしたときの対角線上の抵抗を確認
+```
+$ python check_resistance.py 3 2.4
+```
+
+中央に電流源，四隅にGNDを置いて各ノードの電圧を動作点解析で求める．接触は，横・縦を0～1で表現したXとYの位置を中心として，MxMの矩形領域がF倍の抵抗値になることでシミュレートとする．前の抵抗チェックに問題が無いことを確認し，同設定で(x,y) = (0.5,0.25)および(x,y) = (0.25,0.5)に接触して抵抗が半減したとするならば，以下のように実行できる．
+```
+$ python measure_voltages.py -m 3 -r 2.4 -x 0.5 0.25 -y 0.25 0.5 -f 0.5 0.5
+```
+
+## 7x7の観測点シミュレーション
 
 電極間グリッド数を3とした時の電極ノード番号を確認
  ```
@@ -44,7 +60,25 @@ $ python simulate.py -s --X=0.1 --Y=0.2 --F=0.3
 
 # Usage
 
-## `suggest_setup`
+## 全ノードの動作点解析
+
+### `check_resistance.py`
+対角線上で抵抗を計測するためのスクリプトです．
+
+### `measure_voltages.py`
+中央に電流源，四隅にGNDを置いて各ノードの電圧を動作点解析するためのスクリプトです．
+
+## plot_measured_voltages.py
+measure_voltages.pyの実行によって得られた結果をpickleに保存した場合において，このpickleを渡してグラフを描画するスクリプト．
+
+
+### `rnet.py`
+動作点解析用モジュールです．上記スクリプトを利用せず，自身でシミュレーションコードを書く場合に利用してください．
+
+
+## 7x7の観測点シミュレーション
+
+### `suggest_setup.py`
 
 ```
 usage: suggest_setup.py [-h] M
@@ -59,7 +93,7 @@ usage: suggest_setup.py [-h] M
   1. 全体の格子サイズ．総ノード数
   1. 入出力のノード番号（電極位置のノード番号を入出力に分けたもの）
 
-## `generate_base_netlist`
+### `generate_base_netlist.py`
 
 ```
 usage: generate_base_netlist.py [-h] [--R R] [--C C] [--V V] [--F F] [--D D]
@@ -85,12 +119,12 @@ usage: generate_base_netlist.py [-h] [--R R] [--C C] [--V V] [--F F] [--D D]
 - 戻り値（標準出力）
   1. ネットリスト（ファイル保存はDemoに示したようにリダイレクトを使用すること）
 
-### 備考
+#### 備考
  - エラーは標準エラー出力に出力される．
  - コンデンサでGNDに接続されるため，現状，入力電圧に変化がないと電流が流れない．他の設定も考えられるようにするべきか．
 
 
-## `simulate.py`
+### `simulate.py`
 ```
 usage: simulate.py [-h] [-g] [--Dp DP] [--Df DF] [-s] [--X X] [--Y Y] [--F F]
 ```
@@ -115,10 +149,10 @@ usage: simulate.py [-h] [-g] [--Dp DP] [--Df DF] [-s] [--X X] [--Y Y] [--F F]
   1. シミュレーションを行った接触条件のリスト
   1. 各電極の電圧情報
 
-### 備考
+#### 備考
  - 結果の表示方法を切り替えるオプション引数を作り，データセットとしてファイル保存できるようにする必要あり．
 
-## `sim7x7.py`
+### `sim7x7.py`
 
 上記`simulate.py`を実装するためのモジュールです．上記スクリプトを利用せず，自身でシミュレーションコードを書く場合に利用してください．
 
