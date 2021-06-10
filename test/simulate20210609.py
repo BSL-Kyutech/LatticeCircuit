@@ -46,4 +46,4 @@ if __name__=='__main__':
 
     with open('%d_%2.2fk_results_helix_original.pickle' % (M,R), mode="wb") as f:
         pickle.dump(d, f)
-    print('Results are dumped to %d_%2.2fk_results_helix_originalx.pickle' % (M,R))
+    print('Results are dumped to %d_%2.2fk_results_helix_original.pickle' % (M,R))

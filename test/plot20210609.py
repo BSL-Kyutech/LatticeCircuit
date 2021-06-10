@@ -35,15 +35,16 @@ if __name__=='__main__':
     def plot(indx):
         plt.cla()
         cntr = ax.contour(d['%d'%indx], colors='blue')
-        #ax.clabel(cntr)
         ax.set_aspect('equal')
         int_x = int(X[indx]*(N+1))
         int_y = int(Y[indx]*(N+1))
         ax.scatter(int_y, int_x, color='orange', s=750)
+        ax.set_xlim(0, 103)
+        ax.set_ylim(0, 103)
     
     ani = animation.FuncAnimation(fig, plot, frames=range(100), interval=100)
 
     if args.save:
-        ani.save('anim.gif', writer="imagemagic")
+        ani.save('anim_original.gif', writer="imagemagic")
     else:
         plt.show()

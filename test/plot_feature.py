@@ -20,8 +20,10 @@ if __name__=='__main__':
 
     M=13
     N=(7+1)*M+1
-    with open('./13_1.70k_results_helix.pickle', mode="rb") as f:
+    with open('./13_1.70k_results_helix_original.pickle', mode="rb") as f:
         d = pickle.load(f)
+    with open('./13_1.70k_baseline.pickle', mode="rb") as f:
+        baseline = pickle.load(f)
 
     # touching points
     theta = np.linspace(0, 2 * np.pi, 100)
@@ -34,16 +36,24 @@ if __name__=='__main__':
 
     def plot(indx):
         plt.cla()
-        cntr = ax.contour(d['%d'%indx], colors='blue')
-        #ax.clabel(cntr)
+        ret_v = np.abs(np.diff(d['%d'%indx],axis=0)-np.diff(baseline,axis=0))
+        ret_v = (ret_v[:,1:]+ret_v[:,:-1])/2.0
+        ret_h = np.abs(np.diff(d['%d'%indx])-np.diff(baseline))
+        ret_h = (ret_h[1:,:]+ret_h[:-1,:])/2.0
+        ret = ret_v + ret_h
+        #ret = np.where(ret > np.mean(ret)*10.0, ret, 0)
+
+        cntr = ax.contour(ret, colors='blue')
         ax.set_aspect('equal')
         int_x = int(X[indx]*(N+1))
         int_y = int(Y[indx]*(N+1))
         ax.scatter(int_y, int_x, color='orange', s=750)
+        ax.set_xlim(0, 103)
+        ax.set_ylim(0, 103)
     
     ani = animation.FuncAnimation(fig, plot, frames=range(100), interval=100)
 
     if args.save:
-        ani.save('anim_diff.gif', writer="imagemagic")
+        ani.save('anim_feature.gif', writer="imagemagic")
     else:
         plt.show()
