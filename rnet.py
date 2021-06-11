@@ -50,7 +50,7 @@ def generate_map_node(M):
     
     return map_node
 
-def generate_base_netlist(M, R):
+def generate_base_netlist(M, R, I=True):
     N = (7+1)*M # N+1 x N+1 lattice
     map_node = generate_map_node(M)
 
@@ -73,7 +73,10 @@ def generate_base_netlist(M, R):
                 print( "R%d %s %s %2.2fk" % (count_r, map_node[i,j], map_node[i+1,j], R) , file=f )
                 count_r = count_r + 1
         # input
-        print( "I1 0 %s 1mA" % (map_node[int(N/2),int(N/2)]) , file=f )
+        if I:
+            print( "I1 0 %s 1mA" % (map_node[int(N/2),int(N/2)]) , file=f )
+        else:
+            print( "V1 %s 0 5V" % (map_node[int(N/2),int(N/2)]) , file=f )
         # simulation setups
         print( ".op" , file=f)
         for i in range((N+1)*(N+1)-4):
